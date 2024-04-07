@@ -42,6 +42,6 @@ mvn clean install
 
 # Outro
 echo "[#] SCRIPT FINALIZADO CORRECTAMENTE"
-echo "[#] Reporte: http://localhost:9000/dashboard?id=$projectKey"
+echo "[#] Reporte: report.html"
 echo "[#] Ruta de ejecutables: $folder/<modulo>/target/"
 
