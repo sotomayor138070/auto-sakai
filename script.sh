@@ -20,55 +20,19 @@ trap ctrl_c SIGINT
 # Show working path
 echo "[+] Proyecto elegido: $folder"
 
-# Check Sonar started
-if lsof -Pi :9000 -sTCP:LISTEN -t >/dev/null; then
-    echo "[+] SonarQube iniciado"
-else
-    echo "[!] SonarQube debe estar iniciado"
-    echo "[!] Saliendo..."
-    exit 1
-fi
-
-
-# Check Sonar project created
-response=$(curl -s -u $user:$password -X GET "http://localhost:9000/api/projects/search?projects=$projectKey")
-total=$(echo "$response" | awk -F'"total":|}' '{print $2}')
-
-if [ "$total" -ne 1 ]; then
-    # Create project
-    curl -s -u $user:$password -X POST "http://localhost:9000/api/projects/create?name=$projectName&project=$projectKey"
-fi
-
-# Generate token
-response=$(curl -s -u $user:$password -X POST "http://localhost:9000/api/user_tokens/generate?name=$tokenName&type=PROJECT_ANALYSIS_TOKEN&projectKey=$projectKey")
-
-# Verifica si hay un campo "error" en el JSON de la respuesta
-if echo "$response" | grep -q '"errors":'; then
-    # El token ya existe
-    token=$(cat $folder/.token)
-else
-    # El token no existe
-    token=$(echo "$response" | grep -o '"token": *"[^"]*"' | awk -F'"' '{print $4}')
-    # Guardando token en local
-    echo $token > $folder/.token
+# Check PMD & download it
+$HOME/pmd-bin-7.0.0/bin/pmd > /dev/null 2>&1
+if [ "$?" -eq 127 ]; then
+    echo "[-] No existe PMD"
+    echo "[+] Descargando PMD"
+    wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.0.0/pmd-dist-7.0.0-bin.zip -P $HOME
+    unzip $HOME/pmd-dist-7.0.0-bin.zip
+    rm $HOME/pmd-dist-7.0.0-bin.zip
 fi
 
 # Analizando proyecto
-
-# Set Temurin 17
-echo "[+] Setting Temurin 17: temurin-17-jdk-amd64"
-sudo update-java-alternatives --set temurin-17-jdk-amd64  
-if [ "$?" -eq 1 ]; then
-    echo "[!] temurin-17-jdk-amd64 no encontrado. Instala Temurin 17 y vuelve a ejecutar el script"
-fi
-
-cd $folder
 echo "[+] Analizando proyecto!"
-mvn sonar:sonar \
-  -Dsonar.projectKey=$projectKey \
-  -Dsonar.projectName=$projectName \
-  -Dsonar.host.url=http://localhost:9000 \
-  -Dsonar.token=$token
+$HOME/pmd-bin-7.0.0/bin/pmd check -d $folder -R rulesets/java/quickstart.xml -f summaryhtml -r report.html
 
 # Compilación y empaquetado
 
@@ -80,6 +44,7 @@ if [ "$?" -eq 1 ]; then
 fi
 echo "[+] Compilando y empaquetando proyecto!"
 
+cd $folder
 mvn clean install
 
 # Outro
