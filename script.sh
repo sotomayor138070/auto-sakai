@@ -1,13 +1,6 @@
 #!/bin/sh 
 
-# VARS
-user=admin # Sonar user
-password=admin1 # Sonar password
-
 # CONSTS
-projectKey=sakai2
-projectName=Sakai
-tokenName=sakai_token3
 folder=${1:-"."}
 
 # Handling Ctrl+C
