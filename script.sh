@@ -1,8 +1,9 @@
 #!/bin/sh 
 
 # CONSTS
-folder=${1:-"."}
-currentFolder=$(pwd)
+sakaiFolder=sakai/kernel/component-manager
+ebFolder=easybuggy
+originalFolder=$(pwd)
 
 # Handling Ctrl+C
 ctrl_c() {
@@ -11,8 +12,12 @@ ctrl_c() {
 }
 trap ctrl_c SIGINT
 
-# Show working path
-echo "[+] Proyecto elegido: $folder"
+## VALORES POR DEFECTO
+echo "[+] Rutas por defecto"
+echo -e "\tSAKAI: $sakaiFolder/"
+echo -e "\tEASYBUGGY: $ebFolder/"
+
+## REQUISITOS
 
 # Check PMD & download it
 $HOME/pmd-bin-7.0.0/bin/pmd > /dev/null 2>&1
@@ -24,33 +29,39 @@ if [ "$?" -eq 127 ]; then
     rm $HOME/pmd-dist-7.0.0-bin.zip
 fi
 
-# Analizando proyecto
-echo "[+] Analizando proyecto!"
-$HOME/pmd-bin-7.0.0/bin/pmd check -d $folder -R rulesets/java/quickstart.xml -f summaryhtml -r report.html
-
-# SAKAI: Compilación y empaquetado
-
-# Set java 11
+# Setting Java 11
 echo "[+] Setting Java 11: java-1.11.0-openjdk-amd64"
 sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
 if [ "$?" -eq 1 ]; then
     echo "[!] java-1.11.0-openjdk-amd64 no encontrado. Instala Java 11 y vuelve a ejecutar el script"
 fi
-echo "[+] Compilando y empaquetando proyecto!"
 
-cd $folder
+## SAKAI
+echo -e "\n[#] --- SAKAI ---"
+
+# Analizando proyecto
+echo "[+] Analizando proyecto!"
+$HOME/pmd-bin-7.0.0/bin/pmd check -d $sakaiFolder -R rulesets/java/quickstart.xml -f summaryhtml -r report.html
+
+# Compilación y empaquetado
+echo "[+] Compilando y empaquetando!"
+cd $sakaiFolder
 mvn clean install -DskipTests
 
-# EASYBUGGY: Compilación y empaquetado
-echo "[+] Compilando y empaquetando Easybuggy!"
-cd $currentFolder/easybuggy
+## EASYBUGGY
+echo -e "\n[#] --- EASYBUGGY ---"
+
+# Compilación y empaquetado
+echo "[+] Compilando y empaquetando!"
+cd $originalFolder
+cd $ebFolder
 mvn package
 
 
 # Outro
-echo "[#] SCRIPT FINALIZADO CORRECTAMENTE"
+echo -e "\n[#] SCRIPT FINALIZADO CORRECTAMENTE"
 echo "[#] Reporte: report.html"
 echo "[#] Ruta de ejecutables:"
-echo -e "\tSAKAI: target/ dentro de $folder"
-echo -e "\tEASYBUGGY: $currentFolder/easybuggy/target/easybuggy.jar"
+echo -e "\tSAKAI: target/ dentro de $sakaiFolder"
+echo -e "\tEASYBUGGY: $ebFolder/target/easybuggy.jar"
 
