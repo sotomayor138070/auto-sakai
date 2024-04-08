@@ -1,7 +1,8 @@
 #!/bin/sh 
 
 # CONSTS
-folder=${1:-"."}
+sakaiFolder=sakai/kernel/component-manager
+originalFolder=$(pwd)
 
 # Handling Ctrl+C
 ctrl_c() {
@@ -10,23 +11,27 @@ ctrl_c() {
 }
 trap ctrl_c SIGINT
 
-# Show working path
-echo "[+] Proyecto elegido: $folder"
+## VALORES POR DEFECTO
+echo "[+] Rutas por defecto"
+echo -e "\tSAKAI: $sakaiFolder/"
 
-# Testing
+## REQUISITOS
 
-# Set java 11
+# Setting Java 11
 echo "[+] Setting Java 11: java-1.11.0-openjdk-amd64"
 sudo update-java-alternatives --set java-1.11.0-openjdk-amd64
 if [ "$?" -eq 1 ]; then
     echo "[!] java-1.11.0-openjdk-amd64 no encontrado. Instala Java 11 y vuelve a ejecutar el script"
 fi
+
+## SAKAI
+echo -e "\n[#] --- SAKAI ---"
 echo "[+] Ejecutando tests del proyecto!"
 
-cd $folder
+cd $sakaiFolder
 mvn test
 
 # Outro
-echo "[#] SCRIPT FINALIZADO CORRECTAMENTE"
+echo -e "\n[#] SCRIPT FINALIZADO CORRECTAMENTE"
 
 
