@@ -2,6 +2,7 @@
 
 # CONSTS
 folder=${1:-"."}
+currentFolder=$(pwd)
 
 # Handling Ctrl+C
 ctrl_c() {
@@ -27,7 +28,7 @@ fi
 echo "[+] Analizando proyecto!"
 $HOME/pmd-bin-7.0.0/bin/pmd check -d $folder -R rulesets/java/quickstart.xml -f summaryhtml -r report.html
 
-# Compilación y empaquetado
+# SAKAI: Compilación y empaquetado
 
 # Set java 11
 echo "[+] Setting Java 11: java-1.11.0-openjdk-amd64"
@@ -38,10 +39,18 @@ fi
 echo "[+] Compilando y empaquetando proyecto!"
 
 cd $folder
-mvn clean install
+mvn clean install -DskipTests
+
+# EASYBUGGY: Compilación y empaquetado
+echo "[+] Compilando y empaquetando Easybuggy!"
+cd $currentFolder/easybuggy
+mvn package
+
 
 # Outro
 echo "[#] SCRIPT FINALIZADO CORRECTAMENTE"
 echo "[#] Reporte: report.html"
-echo "[#] Ruta de ejecutables: $folder/<modulo>/target/"
+echo "[#] Ruta de ejecutables:"
+echo -e "\tSAKAI: target/ dentro de $folder"
+echo -e "\tEASYBUGGY: $currentFolder/easybuggy/target/easybuggy.jar"
 
