@@ -1,3 +1,6 @@
 [submodule "sakai"]
 	path = sakai
 	url = https://github.com/sakaiproject/sakai.git
+[submodule "easybuggy"]
+	path = easybuggy
+	url = https://github.com/k-tamura/easybuggy.git
