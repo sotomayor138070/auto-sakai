@@ -1,9 +1,9 @@
 #!/bin/sh 
 
 # CONSTS
-sakaiFolder=sakai/kernel/component-manager
-ebFolder=easybuggy
-originalFolder=$(pwd)
+sakaiFolder=/var/lib/jenkins/scripts/auto-sakai/sakai/kernel/component-manager
+ebFolder=/var/lib/jenkins/scripts/auto-sakai/easybuggy
+
 
 # Handling Ctrl+C
 ctrl_c() {
@@ -53,7 +53,6 @@ echo -e "\n[#] --- EASYBUGGY ---"
 
 # Compilación y empaquetado
 echo "[+] Compilando y empaquetando!"
-cd $originalFolder
 cd $ebFolder
 mvn package
 
