@@ -1,8 +1,7 @@
 #!/bin/sh 
 
 # CONSTS
-sakaiFolder=sakai/kernel/component-manager
-originalFolder=$(pwd)
+sakaiFolder=/var/lib/jenkins/scripts/auto-sakai/sakai/kernel/component-manager
 
 # Handling Ctrl+C
 ctrl_c() {
