@@ -41,15 +41,21 @@ echo -e "\n[#] --- SAKAI ---"
 
 # Analizando proyecto
 echo "[+] Analizando proyecto!"
-$HOME/pmd-bin-7.0.0/bin/pmd check -d $sakaiFolder -R rulesets/java/quickstart.xml -f summaryhtml -r report.html
+$HOME/pmd-bin-7.0.0/bin/pmd check -d $sakaiFolder -R rulesets/java/quickstart.xml -f summaryhtml -r report_sakai.html
 
 # Compilación y empaquetado
 echo "[+] Compilando y empaquetando!"
 cd $sakaiFolder
 mvn clean install -DskipTests
 
+cd $originalFolder
+
 ## EASYBUGGY
 echo -e "\n[#] --- EASYBUGGY ---"
+
+# Analizando proyecto
+echo "[+] Analizando proyecto!"
+$HOME/pmd-bin-7.0.0/bin/pmd check -d $ebFolder -R rulesets/java/quickstart.xml -f summaryhtml -r report_easybuggy.html
 
 # Compilación y empaquetado
 echo "[+] Compilando y empaquetando!"
@@ -59,7 +65,9 @@ mvn package
 
 # Outro
 echo -e "\n[#] SCRIPT FINALIZADO CORRECTAMENTE"
-echo "[#] Reporte: report.html"
+echo "[#] Reporte:"
+echo -e "\tSAKAI: report_sakai.html"
+echo -e "\tEASYBUGGY: report_easybuggy.html"
 echo "[#] Ruta de ejecutables:"
 echo -e "\tSAKAI: target/ dentro de $sakaiFolder"
 echo -e "\tEASYBUGGY: $ebFolder/target/easybuggy.jar"
