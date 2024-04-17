@@ -3,6 +3,7 @@
 # CONSTS
 sakaiFolder=/var/lib/jenkins/scripts/auto-sakai/sakai/kernel/component-manager
 ebFolder=/var/lib/jenkins/scripts/auto-sakai/easybuggy
+originalFolder=$(pwd)
 
 
 # Handling Ctrl+C
@@ -48,7 +49,7 @@ echo "[+] Compilando y empaquetando!"
 cd $sakaiFolder
 mvn clean install -DskipTests
 
-cd $originalFolder
+cd "$originalFolder"
 
 ## EASYBUGGY
 echo -e "\n[#] --- EASYBUGGY ---"
